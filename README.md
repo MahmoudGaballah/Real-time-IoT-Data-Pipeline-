@@ -1,48 +1,155 @@
-Mahmoud Alsayed Gaballah(dagabz234@gmail.com)
-1. Project Description
-Design and implement a Real-Time IoT Data Pipeline to simulate and process sensor data (temperature and humidity) using both batch and streaming techniques. The system will detect anomalies and display metrics in a real-time dashboard.
-2. Group Members & Roles
-Member Name	Role
-Mahmoud Elsayed Gaballah	Team Leader / Data Engineer
-Malak Hosam Soliman 
-Mennatullah Waleed Hassanen 
-Salma Abd Elaziz Daby 	IoT Data Simulation Developer
-Batch ETL Engineer
-Streaming & Alerting Engineer
-Ganna Salah Ahmady	Database & Storage Specialist
-Mennatullah Mohammed Naam	Visualization & Reporting Analyst
-3. Team Leader
-Mahmoud Elsayed Gaballah
-4. Objectives
-•	Build an IoT system that simulates real-time sensor data flow.
-•	Implement batch and streaming processing for IoT data.
-•	Detect anomalies and generate alerts.
-•	Visualize key metrics in a live dashboard.
-5. Tools & Technologies
-Phase	Tools / Technologies
-Data Simulation	Python / Kafka Streaming 
-Batch ETL	PySpark / Azure Data Factory
-Streaming	Kafka / Spark Structured Streaming
-Storage	Azure Data Lake / SQL Database
-Dashboard	Power BI / Streamlit
-Reporting	PowerPoint / PDF
-6. Milestones & Deadlines
-Milestone	Description	Deadline
-Milestone 1: Data Simulation	Python script + sensor data	31/9/2025
-Milestone 2: Batch ETL	ETL pipeline + processed dataset	11/10/2025
-Milestone 3: Streaming Analytics	Real-time alerts pipeline	1/11/2025
-Milestone 4: Dashboard & Report	Visualization + final report	22/11/2025
-7. KPIs (Key Performance Indicators)
-1.	Data Preprocessing
-•	100% of missing/duplicate data correctly handled.
-•	Script efficiency: execution time within expected threshold.
-2.	SQL Integration
-•	Query accuracy: ≥95%.
-•	Query performance: average execution time under  3seconds.
-3.	Visualization
-•	Dashboard load time: <3 seconds.
-•	≥90% of required KPIs visualized.
-4.	Presentation
-•	Report completeness: 100%.
-•	Stakeholder clarity/feedback score: ≥4/5.
+# Kafka + Spark Structured Streaming + SQL Database
 
+This project provides a local development environment using **Docker Compose** to run:
+
+* **Zookeeper**
+* **Kafka Broker**
+* **Spark (client or cluster)**
+* **SQL Database** (SSMS)
+
+The goal is to stream data from Kafka into Spark, process it, and write the results to a SQL database.
+
+---
+
+## Requirements
+
+* Docker & Docker Compose installed
+* Spark application that reads from Kafka and writes to SQL using JDBC
+
+---
+
+## How to Run the Environment
+
+Run the full environment:
+
+```bash
+docker compose up -d
+```
+
+Make sure you:
+
+1. Configure the **connection between Spark and the SQL database**
+2. Configure the **Kafka advertised listener** so Spark can connect
+3. Configure the **Spark host** to ensure proper communication
+
+All details are explained below.
+
+---
+
+#  Configuration Details
+
+##  Configure Kafka Host
+
+Inside `docker-compose.yml`, set:
+
+```yaml
+KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+```
+
+Or replace `localhost` with your machine IP if Spark is running outside Docker.
+
+Spark must use the same address:
+
+```python
+kafkaServer = "localhost:9092"
+```
+
+---
+
+##  Configure SQL Database Connection
+
+Your Spark application must include a valid JDBC configuration:
+
+```python
+db_url = "jdbc:sqlserver://localhost:1433;databaseName=(Database_name)"
+db_user = "(User's_name)"
+db_pass = "(User's_Password)"
+
+properties = {
+    "user": db_user,
+    "password": db_pass,
+    "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+}
+```
+Make sure your Spark container or host machine has access to the database port.
+---
+
+##  Configure Spark Host
+
+If Spark is running **inside Docker**, use service names to connect:
+
+```python
+kafkaServer = "kafka:9092"
+sqlHost = "sqlserver"   # example
+```
+
+If Spark is running **on your host machine**, use:
+
+```python
+kafkaServer = "localhost:9092"
+sqlHost = "localhost"
+```
+
+---
+
+#  Example: Spark Structured Streaming Code
+
+```python
+raw_df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", kafkaServer) \
+    .option("subscribe", "my-topic") \
+    .load()
+
+# Write to SQL
+query = processed_df.writeStream \
+    .foreachBatch(lambda df, epochId: df.write.jdbc(db_url, "output_table", "append", properties)) \
+    .outputMode("append") \
+    .start()
+
+query.awaitTermination()
+```
+
+---
+
+#  Example docker-compose.yml (simplified)
+
+```yaml
+version: '3.8'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "YourStrongPassword"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+```
+# Then for the dashboards and visualization use node-red locally by downloading it and connecting it with the flows in
+the folder then operating all the four source codes together
+---
+
+# Summary
+
+To successfully run the project, **you must correctly configure**:
+
+* The **JDBC connection** between Spark and SQL database
+* The **Kafka advertised listener** (host/IP)
+* The **Spark host** so it can reach Kafka & SQL
+
+"Thank YOU !!!!!!!!! XD"
