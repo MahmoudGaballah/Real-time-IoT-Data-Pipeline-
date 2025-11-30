@@ -1,0 +1,212 @@
+[
+    {
+        "id": "8394926bcbbd0cc4",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e4d81c73f2a9bd47",
+        "type": "inject",
+        "z": "8394926bcbbd0cc4",
+        "name": "Check Every 10 sec",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "3",
+        "topic": "",
+        "payload": "SELECT TOP 50 * FROM iot_data_s ORDER BY timestamp DESC",
+        "payloadType": "str",
+        "x": 120,
+        "y": 60,
+        "wires": [
+            [
+                "082af96826f6e976"
+            ]
+        ]
+    },
+    {
+        "id": "082af96826f6e976",
+        "type": "MSSQL",
+        "z": "8394926bcbbd0cc4",
+        "mssqlCN": "492c2d0dc3bb4177",
+        "name": "Read IOT Data",
+        "outField": "payload",
+        "returnType": 0,
+        "throwErrors": "0",
+        "query": "",
+        "modeOpt": "",
+        "modeOptType": "query",
+        "queryOpt": "payload",
+        "queryOptType": "msg",
+        "paramsOpt": "queryParams",
+        "paramsOptType": "msg",
+        "rows": "",
+        "rowsType": "msg",
+        "parseMustache": true,
+        "params": [],
+        "x": 340,
+        "y": 60,
+        "wires": [
+            [
+                "853e2f19ee89b764"
+            ]
+        ]
+    },
+    {
+        "id": "853e2f19ee89b764",
+        "type": "function",
+        "z": "8394926bcbbd0cc4",
+        "name": "Filter anomaly_flag = 1",
+        "func": "msg.payload = msg.payload.filter(row => row.anomaly_flag === 1);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 60,
+        "wires": [
+            [
+                "d240d53f5f1d8d92"
+            ]
+        ]
+    },
+    {
+        "id": "d240d53f5f1d8d92",
+        "type": "split",
+        "z": "8394926bcbbd0cc4",
+        "name": "Split rows",
+        "splt": "1",
+        "spltType": "len",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 820,
+        "y": 60,
+        "wires": [
+            [
+                "d4602169099ad42e"
+            ]
+        ]
+    },
+    {
+        "id": "d4602169099ad42e",
+        "type": "function",
+        "z": "8394926bcbbd0cc4",
+        "name": "Format Alert Message",
+        "func": "msg.payload = \n    \"🚨 IoT Anomaly Detected!\\n\" +\n    \"Device: \" + msg.payload.device_id + \"\\n\" +\n    \"Temp: \" + msg.payload.temperature + \"°C\\n\" +\n    \"Humidity: \" + msg.payload.humidity + \"\\n\" +\n    \"Location: \" + msg.payload.location_name;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 180,
+        "wires": [
+            [
+                "73c41681e828e0e7",
+                "2ac2161c3c7dd773"
+            ]
+        ]
+    },
+    {
+        "id": "73c41681e828e0e7",
+        "type": "ui-notification",
+        "z": "8394926bcbbd0cc4",
+        "ui": "8458a97b6ae6e7e9",
+        "position": "bottom left",
+        "colorDefault": false,
+        "color": "#000000",
+        "displayTime": "",
+        "showCountdown": false,
+        "outputs": 1,
+        "allowDismiss": false,
+        "dismissText": "",
+        "allowConfirm": false,
+        "confirmText": "",
+        "raw": false,
+        "className": "",
+        "name": "Show Anomaly Alert",
+        "x": 980,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2ac2161c3c7dd773",
+        "type": "debug",
+        "z": "8394926bcbbd0cc4",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "492c2d0dc3bb4177",
+        "type": "MSSQL-CN",
+        "tdsVersion": "7_4",
+        "name": "Project",
+        "server": "192.168.1.7",
+        "port": "1433",
+        "encyption": false,
+        "trustServerCertificate": true,
+        "database": "iot_db1",
+        "useUTC": true,
+        "connectTimeout": "220000",
+        "requestTimeout": "0",
+        "cancelTimeout": "120000",
+        "pool": "10",
+        "parseJSON": true,
+        "enableArithAbort": true,
+        "readOnlyIntent": false
+    },
+    {
+        "id": "8458a97b6ae6e7e9",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "077f43ce994cdbd1",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-mssql-plus": "0.13.1",
+            "@flowfuse/node-red-dashboard": "1.29.0"
+        }
+    }
+]

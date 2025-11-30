@@ -1,0 +1,2499 @@
+[
+    {
+        "id": "602ac151bcec83f1",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "68b6111bc1fd47e1",
+        "type": "MSSQL",
+        "z": "602ac151bcec83f1",
+        "mssqlCN": "492c2d0dc3bb4177",
+        "name": "",
+        "outField": "payload",
+        "returnType": 0,
+        "throwErrors": 1,
+        "query": "SELECT device_id, avg_temp, avg_humidity, avg_pressure, avg_air_quality, avg_noise_level, avg_battery_level\r\nFROM Batch_iot_summary;\r\n",
+        "modeOpt": "queryMode",
+        "modeOptType": "query",
+        "queryOpt": "payload",
+        "queryOptType": "editor",
+        "paramsOpt": "queryParams",
+        "paramsOptType": "none",
+        "rows": "rows",
+        "rowsType": "msg",
+        "parseMustache": true,
+        "params": [],
+        "x": 200,
+        "y": 1320,
+        "wires": [
+            [
+                "a06338e6c1541d79",
+                "45a1dc7a8f6c9210",
+                "7e91fbe6e831064f",
+                "ac6106fec71a2469",
+                "b5441498f94e7389"
+            ]
+        ]
+    },
+    {
+        "id": "a06338e6c1541d79",
+        "type": "function",
+        "z": "602ac151bcec83f1",
+        "name": "function 2",
+        "func": "let sensors = msg.payload;\n\n// نجيب Sensor 1 فقط\nlet sensor = sensors.find(s => s.device_id === \"sensor 1\");\n\nif (!sensor) {\n    node.warn(\"Sensor 1 not found\");\n    return null;\n}\n\nlet values = {\n    \"Temperature\": sensor.avg_temp,\n    \"Humidity\": sensor.avg_humidity,\n    \"Pressure\": sensor.avg_pressure,\n    \"AirQuality\": sensor.avg_air_quality,\n    \"Noise\": sensor.avg_noise_level,\n    \"Battery\": sensor.avg_battery_level\n};\n\n// إرسال 6 رسائل (لكل Gauge)\nfor (let key in values) {\n    node.send({\n        topic: key,        // يظهر على كل Gauge\n        payload: values[key]  // القيمة المعروضة\n    });\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 100,
+        "wires": [
+            [
+                "42aa0ea5313b617b",
+                "36003a72e0cc91e3",
+                "e60dd51c4a43f929",
+                "2195d16f63eb0ed1",
+                "19be48f98d17890c"
+            ]
+        ]
+    },
+    {
+        "id": "183ee1cb125cc2a7",
+        "type": "debug",
+        "z": "602ac151bcec83f1",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "e5583cfd86d35765",
+        "type": "inject",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 40,
+        "wires": [
+            [
+                "68b6111bc1fd47e1"
+            ]
+        ]
+    },
+    {
+        "id": "015beca077e6bdbb",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "d58938abd428fb07",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "abed18b16d1b3dc9",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "d58938abd428fb07",
+        "order": 4,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "2000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "556195be526ed9a3",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "d58938abd428fb07",
+        "order": 5,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "AirQuality",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4c7fc5d11d625f03",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "d58938abd428fb07",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Noise",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "42aa0ea5313b617b",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Temperature",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 100,
+        "wires": [
+            [
+                "183ee1cb125cc2a7",
+                "48a6890363b07089"
+            ]
+        ]
+    },
+    {
+        "id": "36003a72e0cc91e3",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Humidity",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 160,
+        "wires": [
+            [
+                "015beca077e6bdbb",
+                "183ee1cb125cc2a7"
+            ]
+        ]
+    },
+    {
+        "id": "e60dd51c4a43f929",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Pressure",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "abed18b16d1b3dc9",
+                "183ee1cb125cc2a7"
+            ]
+        ]
+    },
+    {
+        "id": "2195d16f63eb0ed1",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "AirQuality",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 280,
+        "wires": [
+            [
+                "556195be526ed9a3",
+                "183ee1cb125cc2a7"
+            ]
+        ]
+    },
+    {
+        "id": "19be48f98d17890c",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Noise",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 340,
+        "wires": [
+            [
+                "4c7fc5d11d625f03",
+                "183ee1cb125cc2a7"
+            ]
+        ]
+    },
+    {
+        "id": "48a6890363b07089",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "Temp",
+        "group": "d58938abd428fb07",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "temp",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "45a1dc7a8f6c9210",
+        "type": "function",
+        "z": "602ac151bcec83f1",
+        "name": "function 3",
+        "func": "let sensors = msg.payload;\n\n// نجيب Sensor 2 فقط\nlet sensor = sensors.find(s => s.device_id === \"sensor 2\");\n\nif (!sensor) {\n    node.warn(\"Sensor 2 not found\");\n    return null;\n}\n\nlet values = {\n    \"Temperature\": sensor.avg_temp,\n    \"Humidity\": sensor.avg_humidity,\n    \"Pressure\": sensor.avg_pressure,\n    \"AirQuality\": sensor.avg_air_quality,\n    \"Noise\": sensor.avg_noise_level,\n    \"Battery\": sensor.avg_battery_level\n};\n\n// إرسال 6 رسائل (لكل Gauge)\nfor (let key in values) {\n    node.send({\n        topic: key,        // يظهر على كل Gauge\n        payload: values[key]  // القيمة المعروضة\n    });\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 580,
+        "wires": [
+            [
+                "b76266cc3e90d841",
+                "5efb6d8196ca6073",
+                "98c638a9a8bef75e",
+                "de6fef12c4766e8e",
+                "fad101180de8004a"
+            ]
+        ]
+    },
+    {
+        "id": "256c73325f222d36",
+        "type": "debug",
+        "z": "602ac151bcec83f1",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b9b6de30f8996a99",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "6479c21cf8c3fcf0",
+        "order": 5,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8fccd11213fc440a",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "6479c21cf8c3fcf0",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "2000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7b1280447cb0d39b",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "6479c21cf8c3fcf0",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "AirQuality",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 900,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9a987247706dbab5",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "6479c21cf8c3fcf0",
+        "order": 4,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Noise",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b76266cc3e90d841",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Temperature",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 580,
+        "wires": [
+            [
+                "256c73325f222d36",
+                "d29f16287c9d52db"
+            ]
+        ]
+    },
+    {
+        "id": "5efb6d8196ca6073",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Humidity",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 640,
+        "wires": [
+            [
+                "b9b6de30f8996a99",
+                "256c73325f222d36"
+            ]
+        ]
+    },
+    {
+        "id": "98c638a9a8bef75e",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Pressure",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 700,
+        "wires": [
+            [
+                "8fccd11213fc440a",
+                "256c73325f222d36"
+            ]
+        ]
+    },
+    {
+        "id": "de6fef12c4766e8e",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "AirQuality",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 760,
+        "wires": [
+            [
+                "7b1280447cb0d39b",
+                "256c73325f222d36"
+            ]
+        ]
+    },
+    {
+        "id": "fad101180de8004a",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Noise",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 820,
+        "wires": [
+            [
+                "9a987247706dbab5",
+                "256c73325f222d36"
+            ]
+        ]
+    },
+    {
+        "id": "d29f16287c9d52db",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "Temp",
+        "group": "6479c21cf8c3fcf0",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "temp",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 890,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7e91fbe6e831064f",
+        "type": "function",
+        "z": "602ac151bcec83f1",
+        "name": "function 4",
+        "func": "let sensors = msg.payload;\n\n// نجيب Sensor 3 فقط\nlet sensor = sensors.find(s => s.device_id === \"sensor 3\");\n\nif (!sensor) {\n    node.warn(\"Sensor 3 not found\");\n    return null;\n}\n\nlet values = {\n    \"Temperature\": sensor.avg_temp,\n    \"Humidity\": sensor.avg_humidity,\n    \"Pressure\": sensor.avg_pressure,\n    \"AirQuality\": sensor.avg_air_quality,\n    \"Noise\": sensor.avg_noise_level,\n    \"Battery\": sensor.avg_battery_level\n};\n\n// إرسال 6 رسائل (لكل Gauge)\nfor (let key in values) {\n    node.send({\n        topic: key,        // يظهر على كل Gauge\n        payload: values[key]  // القيمة المعروضة\n    });\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1060,
+        "wires": [
+            [
+                "b6e03c208b1de9ea",
+                "fb9b19ee1e6d3a9f",
+                "caec3f0b5229c3fe",
+                "644bf5d3411143ba",
+                "fa6ef50693d91d69"
+            ]
+        ]
+    },
+    {
+        "id": "013ef30f79ae611c",
+        "type": "debug",
+        "z": "602ac151bcec83f1",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "2de1b3e19183e3ac",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "9792b3c204067dda",
+        "order": 5,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "78103ab9978e0606",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "9792b3c204067dda",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "2000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "486eb960f0ccd99a",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "9792b3c204067dda",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "AirQuality",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "830a78a734a6ffa2",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "9792b3c204067dda",
+        "order": 4,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Noise",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 1380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b6e03c208b1de9ea",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Temperature",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1060,
+        "wires": [
+            [
+                "013ef30f79ae611c",
+                "41468a0b8a74c01b"
+            ]
+        ]
+    },
+    {
+        "id": "fb9b19ee1e6d3a9f",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Humidity",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1120,
+        "wires": [
+            [
+                "2de1b3e19183e3ac",
+                "013ef30f79ae611c"
+            ]
+        ]
+    },
+    {
+        "id": "caec3f0b5229c3fe",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Pressure",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1180,
+        "wires": [
+            [
+                "78103ab9978e0606",
+                "013ef30f79ae611c"
+            ]
+        ]
+    },
+    {
+        "id": "644bf5d3411143ba",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "AirQuality",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1240,
+        "wires": [
+            [
+                "486eb960f0ccd99a",
+                "013ef30f79ae611c"
+            ]
+        ]
+    },
+    {
+        "id": "fa6ef50693d91d69",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Noise",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1300,
+        "wires": [
+            [
+                "830a78a734a6ffa2",
+                "013ef30f79ae611c"
+            ]
+        ]
+    },
+    {
+        "id": "41468a0b8a74c01b",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "Temp",
+        "group": "9792b3c204067dda",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "temp",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 1140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ac6106fec71a2469",
+        "type": "function",
+        "z": "602ac151bcec83f1",
+        "name": "function 5",
+        "func": "let sensors = msg.payload;\n\n// نجيب Sensor 4 فقط\nlet sensor = sensors.find(s => s.device_id === \"sensor 4\");\n\nif (!sensor) {\n    node.warn(\"Sensor 4 not found\");\n    return null;\n}\n\nlet values = {\n    \"Temperature\": sensor.avg_temp,\n    \"Humidity\": sensor.avg_humidity,\n    \"Pressure\": sensor.avg_pressure,\n    \"AirQuality\": sensor.avg_air_quality,\n    \"Noise\": sensor.avg_noise_level,\n    \"Battery\": sensor.avg_battery_level\n};\n\n// إرسال 6 رسائل (لكل Gauge)\nfor (let key in values) {\n    node.send({\n        topic: key,        // يظهر على كل Gauge\n        payload: values[key]  // القيمة المعروضة\n    });\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1540,
+        "wires": [
+            [
+                "125c4898a048f482",
+                "53ac0d8bbdb12a42",
+                "db0af599d48d303c",
+                "e56e32d122064feb",
+                "e7437462c56b3453"
+            ]
+        ]
+    },
+    {
+        "id": "82886048fd6e5711",
+        "type": "debug",
+        "z": "602ac151bcec83f1",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 1460,
+        "wires": []
+    },
+    {
+        "id": "6c156728d1461951",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "507020c05a878884",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "72ce05e48c569c43",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "507020c05a878884",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "2000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "50ada22c78d14504",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "507020c05a878884",
+        "order": 4,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "AirQuality",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 1800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1468ce88b043c104",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "507020c05a878884",
+        "order": 5,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Noise",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 1860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "125c4898a048f482",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Temperature",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1540,
+        "wires": [
+            [
+                "82886048fd6e5711",
+                "f5bce8521cd60338"
+            ]
+        ]
+    },
+    {
+        "id": "53ac0d8bbdb12a42",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Humidity",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1600,
+        "wires": [
+            [
+                "6c156728d1461951",
+                "82886048fd6e5711"
+            ]
+        ]
+    },
+    {
+        "id": "db0af599d48d303c",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Pressure",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1660,
+        "wires": [
+            [
+                "72ce05e48c569c43",
+                "82886048fd6e5711"
+            ]
+        ]
+    },
+    {
+        "id": "e56e32d122064feb",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "AirQuality",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1720,
+        "wires": [
+            [
+                "50ada22c78d14504",
+                "82886048fd6e5711"
+            ]
+        ]
+    },
+    {
+        "id": "e7437462c56b3453",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Noise",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 1780,
+        "wires": [
+            [
+                "1468ce88b043c104",
+                "82886048fd6e5711"
+            ]
+        ]
+    },
+    {
+        "id": "f5bce8521cd60338",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "Temp",
+        "group": "507020c05a878884",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "temp",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 1620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b5441498f94e7389",
+        "type": "function",
+        "z": "602ac151bcec83f1",
+        "name": "function 6",
+        "func": "let sensors = msg.payload;\n\n// نجيب Sensor 5 فقط\nlet sensor = sensors.find(s => s.device_id === \"sensor 5\");\n\nif (!sensor) {\n    node.warn(\"Sensor 5 not found\");\n    return null;\n}\n\nlet values = {\n    \"Temperature\": sensor.avg_temp,\n    \"Humidity\": sensor.avg_humidity,\n    \"Pressure\": sensor.avg_pressure,\n    \"AirQuality\": sensor.avg_air_quality,\n    \"Noise\": sensor.avg_noise_level,\n    \"Battery\": sensor.avg_battery_level\n};\n\n// إرسال 6 رسائل (لكل Gauge)\nfor (let key in values) {\n    node.send({\n        topic: key,        // يظهر على كل Gauge\n        payload: values[key]  // القيمة المعروضة\n    });\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 2040,
+        "wires": [
+            [
+                "dbcd4d1e5143330b",
+                "c435623c55ae5f3a",
+                "2cdab17b31810a71",
+                "f423125b7b9ef8aa",
+                "49718e66bfdca70d"
+            ]
+        ]
+    },
+    {
+        "id": "1010ee4fabbfba5f",
+        "type": "debug",
+        "z": "602ac151bcec83f1",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 1960,
+        "wires": []
+    },
+    {
+        "id": "a7d874316f723b2b",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "7d5ec114f4075a9e",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 2180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1fc715efa779df35",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "7d5ec114f4075a9e",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "2000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 2240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1a8ebfbc4c603847",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "7d5ec114f4075a9e",
+        "order": 4,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "AirQuality",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 920,
+        "y": 2300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7b20e1d61a0fe848",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "group": "7d5ec114f4075a9e",
+        "order": 5,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Noise",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 2360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dbcd4d1e5143330b",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Temperature",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 2040,
+        "wires": [
+            [
+                "1010ee4fabbfba5f",
+                "d1d1733efa1691e3"
+            ]
+        ]
+    },
+    {
+        "id": "c435623c55ae5f3a",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Humidity",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 2100,
+        "wires": [
+            [
+                "a7d874316f723b2b",
+                "1010ee4fabbfba5f"
+            ]
+        ]
+    },
+    {
+        "id": "2cdab17b31810a71",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Pressure",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 2160,
+        "wires": [
+            [
+                "1fc715efa779df35",
+                "1010ee4fabbfba5f"
+            ]
+        ]
+    },
+    {
+        "id": "f423125b7b9ef8aa",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "AirQuality",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 2220,
+        "wires": [
+            [
+                "1a8ebfbc4c603847",
+                "1010ee4fabbfba5f"
+            ]
+        ]
+    },
+    {
+        "id": "49718e66bfdca70d",
+        "type": "switch",
+        "z": "602ac151bcec83f1",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Noise",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 670,
+        "y": 2280,
+        "wires": [
+            [
+                "7b20e1d61a0fe848",
+                "1010ee4fabbfba5f"
+            ]
+        ]
+    },
+    {
+        "id": "d1d1733efa1691e3",
+        "type": "ui-gauge",
+        "z": "602ac151bcec83f1",
+        "name": "Temp",
+        "group": "7d5ec114f4075a9e",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "3",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "temp",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": "8",
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 910,
+        "y": 2120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "492c2d0dc3bb4177",
+        "type": "MSSQL-CN",
+        "tdsVersion": "7_4",
+        "name": "Project",
+        "server": "192.168.1.7",
+        "port": "1433",
+        "encyption": false,
+        "trustServerCertificate": true,
+        "database": "iot_db1",
+        "useUTC": true,
+        "connectTimeout": "220000",
+        "requestTimeout": "0",
+        "cancelTimeout": "120000",
+        "pool": "10",
+        "parseJSON": true,
+        "enableArithAbort": true,
+        "readOnlyIntent": false
+    },
+    {
+        "id": "d58938abd428fb07",
+        "type": "ui-group",
+        "name": "avg. Sensor 1",
+        "page": "d7a04ddbc1ee5b34",
+        "width": "3",
+        "height": 1,
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "6479c21cf8c3fcf0",
+        "type": "ui-group",
+        "name": "avg.Sensor 2",
+        "page": "d7a04ddbc1ee5b34",
+        "width": "3",
+        "height": 1,
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "9792b3c204067dda",
+        "type": "ui-group",
+        "name": "avg. Sensor 3",
+        "page": "10028920fc833acb",
+        "width": "4",
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "507020c05a878884",
+        "type": "ui-group",
+        "name": "avg. Sensor 4",
+        "page": "10028920fc833acb",
+        "width": "4",
+        "height": 1,
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "7d5ec114f4075a9e",
+        "type": "ui-group",
+        "name": "avg. Sensor 5",
+        "page": "10028920fc833acb",
+        "width": "4",
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "d7a04ddbc1ee5b34",
+        "type": "ui-page",
+        "name": "Page 3",
+        "ui": "8458a97b6ae6e7e9",
+        "path": "/page3",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "3b036e3a0ba0c653",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "10028920fc833acb",
+        "type": "ui-page",
+        "name": "Page 4",
+        "ui": "8458a97b6ae6e7e9",
+        "path": "/page4",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "0dae3f7cd7011aa5",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 4,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "8458a97b6ae6e7e9",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "3b036e3a0ba0c653",
+        "type": "ui-theme",
+        "name": "Ttt",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#03cc00",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "0dae3f7cd7011aa5",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#ff0505",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "53fb7a503236df8f",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-mssql-plus": "0.13.1",
+            "@flowfuse/node-red-dashboard": "1.29.0"
+        }
+    }
+]
